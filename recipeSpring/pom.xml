@@ -5,6 +5,7 @@
 	<groupId>com.kh</groupId>
 	<artifactId>recipe</artifactId>
 	<name>recipeSpring</name>
+	
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>
@@ -160,6 +161,13 @@
 		    <version>1.4</version>
 		</dependency>
 		
+		<!-- 2. Lombok Library -->
+		<dependency>
+		    <groupId>org.projectlombok</groupId>
+		    <artifactId>lombok</artifactId>
+		    <version>1.18.12</version>
+		    <scope>provided</scope>
+		</dependency>
 		
 		
 		

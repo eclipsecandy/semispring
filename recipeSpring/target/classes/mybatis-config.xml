@@ -8,7 +8,7 @@
 	</settings>
 	
 	<typeAliases>
-		<typeAlias type="com.kh.spring.member.model.vo.Member" alias="member"/>
+		<typeAlias type="com.kh.recipe.member.model.vo.Member" alias="member"/>
 	</typeAliases>
 	
 	<mappers>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="memberMapper">
+	
+	<!-- 로그인 -->
+	<resultMap id="memberResultMap" type="member">
+		<result column="MEM_NO" property="memNo" />
+		<result column="MEM_ID" property="memId" />
+		<result column="MEM_PWD" property="memPwd" />
+		<result column="MEM_NAME" property="memName" />
+		<result column="MEM_NICKNAME" property="memNickname" />
+		<result column="MEM_EMAIL" property="memEmail" />
+		<result column="MEM_STATUS" property="memStatus" />
+		<result column="ENROLL_DATE" property="enrollDate" />
+		<result column="MODIFY_DATE" property="modifyDate" />
+		<result column="DELETE_DATE" property="deleteDate" />
+		<result column="MEM_PICTURE" property="memPicture" />
+		<result column="MEM_GRADE_NUMBER" property="memGrade" />
+		<result column="MEM_GRADE_NAME" property="memGradeName" />
+		<result column="MEM_COUPON_COUNT" property="memCouponCount" />
+		<result column="MEM_REWARD" property="memReward" />
+	</resultMap>
+	
+	<!-- 로그인 -->
+	<select id="loginMember" parameterType="member" resultMap="memberResultMap">
+		SELECT
+		        MEM_NO
+		       ,MEM_ID
+		       ,MEM_PWD
+		       ,MEM_NAME
+		       ,MEM_NICKNAME
+		       ,MEM_EMAIL
+		       ,MEM_STATUS
+		       ,ENROLL_DATE
+		       ,MODIFY_DATE
+		       ,DELETE_DATE
+		       ,MEM_PICTURE
+		       ,MEM_GRADE_NUMBER
+		       ,MEM_GRADE_NAME
+		       ,MEM_COUPON_COUNT
+		       ,MEM_REWARD
+		  FROM
+		       TB_MEMBER
+		  LEFT
+		  JOIN 
+		       (SELECT MEM_NO, CASE WHEN MEM_NO IN (1, 2) THEN 4
+		               WHEN ACCUMULATED_REWARD <![CDATA[<]]> 1000 THEN 1
+		               WHEN ACCUMULATED_REWARD <![CDATA[<]]> 3000 THEN 2
+		                ELSE 3 END AS MEM_GRADE_NUMBER
+		          FROM (SELECT *
+		                  FROM (SELECT MEM_NO, NVL(SUM(REWARD_SCORE), 0) AS ACCUMULATED_REWARD
+	                              FROM TB_REWARD
+	                             RIGHT 
+	                              JOIN 
+	                              	   TB_MEMBER
+	                             USING (MEM_NO)
+	                             WHERE NVL(REWARD_SCORE, 0) >= 0
+	                             GROUP BY MEM_NO))) 
+		 USING (MEM_NO)
+		  LEFT
+		  JOIN 
+		       TB_MEMBER_GRADE
+		    ON 
+		       MEM_GRADE_NUMBER = MEM_GRADE_NO
+		  LEFT
+		  JOIN (SELECT MEM_NO, SUM(REWARD_SCORE) AS MEM_REWARD
+		                              FROM TB_REWARD
+		                             GROUP BY MEM_NO)
+		 USING (MEM_NO)
+		  LEFT 
+		  JOIN 
+		       (SELECT MEM_NO, COUNT(COUPON_NO) AS MEM_COUPON_COUNT
+		          FROM TB_MEMBER_COUPON
+		          JOIN TB_COUPON
+		         USING (COUPON_NO)
+		         WHERE MEMBER_COUPON_STATUS = 'N'
+		           AND COUPON_AVAIL = 'Y'
+		         GROUP BY MEM_NO)
+		 USING 
+		       (MEM_NO)
+		 WHERE
+		       MEM_ID = #{ memId }
+		   AND
+		       MEM_PWD = #{ memPwd }
+		   AND
+		       MEM_STATUS = 'Y'		
+	
+	</select>
+	
+	<!-- 회원가입 -->
+	<insert id="insertMember" parameterType="member">
+		INSERT
+		  INTO 
+		  	   TB_MEMBER 
+		  	   (
+		  	    MEM_NO
+               ,MEM_NAME
+		  	   ,MEM_NICKNAME
+               ,MEM_ID
+		  	   ,MEM_PWD
+		  	   ,MEM_EMAIL
+		  	   )
+		VALUES 
+			   (
+			    SEQ_MEM.NEXTVAL
+			   ,#{ memName }
+			   ,#{ memNickname }
+			   ,#{ memId }
+			   ,#{ memPwd }
+			   ,#{ memEmail }
+			   )
+	</insert>
+	
+	<!-- 중복체크 -->
+	<select id="checkDupl" parameterType="hashmap" resultType="_int">
+		SELECT 
+			   COUNT(*)
+		  FROM
+			   TB_MEMBER
+		 WHERE
+		 <choose>
+		 	<when test="columnName == 'memberEmail'">
+			   MEM_EMAIL = #{ checkVal }
+		 	</when>
+		 	<when test="columnName == 'memberID'">
+		 	   MEM_ID = #{ checkVal }
+		 	</when>
+		 	<otherwise>
+		 	   MEM_NICKNAME = #{ checkVal }
+		 	</otherwise>
+		 </choose>
+	</select>
+	
+	<!-- 아이디 찾기 -->
+	<select id="searchMemberId" parameterType="member" resultMap="memberResultMap">
+		SELECT 
+   		        MEM_NO
+		       ,MEM_ID
+		       ,MEM_PWD
+		       ,MEM_NAME
+		       ,MEM_NICKNAME
+		       ,MEM_EMAIL
+		       ,MEM_STATUS
+		       ,ENROLL_DATE
+		       ,MODIFY_DATE
+		       ,DELETE_DATE
+		       ,MEM_PICTURE
+		       ,MEM_GRADE
+		  FROM 
+		  	   TB_MEMBER
+		 WHERE 
+		 	   MEM_NAME = #{ memName }
+		   AND 
+		 	   MEM_EMAIL = #{ memEmail }
+	</select>
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="searchMemberPwd" parameterType="member" resultType="_int">
+		SELECT
+			   COUNT(*)
+		  FROM 
+		  	   TB_MEMBER
+		 WHERE 
+		 	   MEM_ID = #{ memId }
+		   AND 
+		       MEM_EMAIL = #{ memEmail }
+		   AND 
+		       MEM_STATUS = 'Y'
+	</select>
+	
+	<update id="updateMemberPwd" parameterType="member">
+		UPDATE 
+			   TB_MEMBER
+		   SET 
+		       MEM_PWD = #{ memPwd },
+		       MODIFY_DATE = SYSDATE
+		 WHERE 
+		 	   MEM_ID = #{ memId }
+		   AND 
+		   	   MEM_STATUS = 'Y'
+	</update>
+	
+	<!-- 회원정보변경 -->
+	<update id="updateMember" parameterType="member">
+		UPDATE 
+			   TB_MEMBER
+		   SET 
+		   	   MEM_NAME = #{ memName },
+		       MEM_NICKNAME = #{ memNickname },
+		       MEM_EMAIL = #{ memEmail },
+		       MEM_PICTURE = #{ memPicture },
+		       MODIFY_DATE = SYSDATE
+		 WHERE 
+		 	   MEM_ID = #{ memId }
+		   AND 
+		   	   MEM_STATUS = 'Y'
+	
+	</update>
+	
+	<!-- 회원 탈퇴 -->
+	<delete id="deleteMember" parameterType="_int">
+		UPDATE
+			   TB_MEMBER
+		   SET
+			   MEM_STATUS = 'N'
+		 WHERE 
+		 	   MEM_NO = #{ memNo }
+		   AND
+			   MEM_STATUS = 'Y'
+	
+	</delete>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>
