@@ -30,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public int checkDupl(HashMap<String, String> map) {
-		return 0;
+		return memberDao.checkDupl(sqlSession, map);
 	}
 
 	@Override

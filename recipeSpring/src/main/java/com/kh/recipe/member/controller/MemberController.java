@@ -1,11 +1,14 @@
 package com.kh.recipe.member.controller;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.kh.recipe.member.model.service.MemberService;
 import com.kh.recipe.member.model.vo.Member;
@@ -58,5 +61,35 @@ public class MemberController {
 			return "member/memberEnrollForm.jsp";
 		}
 	}
+	
+	@ResponseBody
+	@RequestMapping("yrcheckDupl.me")
+	public String checkDupl(String checkVal, String columnName) {
+		
+		HashMap map = new HashMap();
+		map.put("checkVal", checkVal);
+		map.put("columnName", columnName);
+		
+		if(memberService.checkDupl(map) > 0) {
+			return "NNNNN";
+		} else {
+			return "NNNNY";
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 }

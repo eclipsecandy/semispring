@@ -125,7 +125,7 @@
 		 	<when test="columnName == 'memberEmail'">
 			   MEM_EMAIL = #{ checkVal }
 		 	</when>
-		 	<when test="columnName == 'memberID'">
+		 	<when test="columnName == 'memberId'">
 		 	   MEM_ID = #{ checkVal }
 		 	</when>
 		 	<otherwise>
