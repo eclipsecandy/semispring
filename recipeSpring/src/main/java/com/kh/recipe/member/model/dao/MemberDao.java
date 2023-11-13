@@ -21,5 +21,9 @@ public class MemberDao {
 	public int checkDupl(SqlSessionTemplate sqlSession, HashMap<String, String> map) {
 		return sqlSession.selectOne("memberMapper.checkDupl", map);
 	}
+	
+	public Member searchMemberId(SqlSessionTemplate sqlSession, Member m) {
+		return sqlSession.selectOne("memberMapper.searchMemberId", m);
+	}
 
 }

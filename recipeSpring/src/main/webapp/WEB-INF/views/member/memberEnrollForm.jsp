@@ -30,8 +30,6 @@
 		</script>
 		<c:remove var="errorMsg" scope="request" />
 	</c:if>
-	
-
   
     <form action="yrenroll.me" method="post">
 
@@ -44,12 +42,10 @@
           <input type="text" placeholder="닉네임(활동명)" name="memNickname" id="memberNickname" maxlength="8" required>
           <!-- <button type="button" onclick="nicknameCheck();">닉네임 중복확인</button> -->
           <label for="memberNickname">* 영문, 한글, 숫자 3 ~ 8자로 입력 가능합니다. </label>
-          
 
           <input type="text" placeholder="아이디(중복불가)" name="memId" id="memberId" maxlength="20" required>
           <!-- <button type="button" onclick="idCheck();">아이디 중복확인</button> -->
           <label for="memberId">* 영문, 숫자 5 ~ 20자로 입력 가능합니다.</label>
-          
           
           <input type="password" placeholder="비밀번호" name="memPwd" id="memberPwd" maxlength="20" required>
           <label for="memberPwd">* 영문, 숫자, 특수문자(!@#$+^*) 포함 8 ~ 20자로 입력 가능합니다.</label>
@@ -60,8 +56,6 @@
           <input type="text" placeholder="이메일" name="memEmail" id="memberEmail" maxlength="50" required>
           <!-- <button type="button" onclick="emailCheck();">이메일 중복확인</button> -->
           <label for="memberEmail">* 인증받을 이메일을 입력해 주세요.</label>
-          
-
           
           <div class="enroll-checkbox">
             <div>
@@ -85,7 +79,7 @@
                     <!-- Modal body -->
                     <div class="modal-body">
                       <label for="close">
-                      서비스 이용약관
+                      	서비스 이용약관<jsp:include page="/WEB-INF/views/common/agreeFile.jsp" />
                       </label>
                     </div>
                     <!-- Modal footer -->
@@ -95,7 +89,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
 
             <div>
@@ -113,7 +106,7 @@
                     </div>
                     <!-- Modal body -->
                     <div class="modal-body">
-                      서비스 이용약관
+                      	서비스 이용약관
                     </div>
                     <!-- Modal footer -->
                     <div class="modal-footer">
@@ -134,6 +127,13 @@
     <script>
     var eachResult = {};
     $(function() {
+    	
+    	var nicknameDupl = 1;
+    	var idDupl = 1;
+    	var emailDupl = 1;
+    	
+    	console.log(nicknameDupl);
+    	
         $('input').keyup(function(){
           // console.log($(this));
           var $errorCheck = $('label[for="' + $(this).attr('id') + '"]');
@@ -150,16 +150,17 @@
           if($(this)[0] == $('#memberNickname')[0]) {
             var $regExp = /^[a-z0-9가-힣]{3,8}$/;
             // 중복체크 호출
-            console.log(nicknameCheck());
+            //console.log(nicknameCheck());
             /*
             console.log(nicknameCheck());
-            if(nicknameCheck()) {
+            if() {
               console.log('들어옴');
               $errorCheck.text("* 이미 존재하는 닉네임입니다!").css('color', 'red');
                           $('#memberNickname').val('').focus();
             }
             */
-            //console.log(nicknameCheck());
+            // nicknameCheck(); 밑에처럼 콘솔로 찍어도 함수호출됨
+            // console.log(nicknameCheck());
             $errorCheck.text("* 영문, 한글, 숫자 3 ~ 8자로 입력 가능합니다. ").css('color', 'black');
             
           };
@@ -168,7 +169,7 @@
           if($(this)[0] == $('#memberId')[0]) {
             var $regExp = /^[a-zA-Z0-9]{5,20}$/;
             // 중복체크 호출
-            idCheck();
+            // idCheck();
             /*
             if(idCheck()) {
               $errorCheck.text("* 이미 존재하는 아이디입니다!").css('color', 'red');
@@ -194,7 +195,7 @@
           if($(this)[0] == $('#memberEmail')[0]) {
             var $regExp =  /^[a-z0-9]+@[a-z]+\.[a-z]{2,6}$/;
             // 중복체크 호출
-            emailCheck();
+            // emailCheck();
             /*
             if(emailCheck()) {
               $errorCheck.text("* 이미 사용 중인 이메일입니다!").css('color', 'red');
@@ -209,7 +210,7 @@
           var eventThis = $(this).attr('id');
           
           // eachResult['eachResult'+eventThis] = 1;
-          eachResult['eachResult'+eventThis] = 0;
+          eachResult[eventThis] = 0;
 
           // 각 정규표현식에 따른 결과
           if(!$regExp.test($(this).val()) || $(this)[0] == $('#memberPwdCheck')[0]){
@@ -218,7 +219,7 @@
             $errorCheck.css('color', 'red');
             // $('#submitBtn').attr('disabled', true);
 
-            eachResult['eachResult'+eventThis] = 0;
+            eachResult[eventThis] = 0;
             // console.log(eventThis);
             
             
@@ -227,7 +228,7 @@
             $errorCheck.css('color', 'black');
             // $('#submitBtn').attr('disabled', false);
             
-            eachResult['eachResult'+eventThis] = 1;
+            eachResult[eventThis] = 1;
           };
           
           
@@ -242,13 +243,13 @@
           
           // 모든 유효성검사 통과 시 버튼 활성화!!!!!!!!!!!!!
           for(var a of list){
-            // console.log(eachResult['eachResult' + a]);
+            // console.log(eachResult[a]);
             // 입력된 값들에 대해서만 1과 0처리
-            if(!isNaN(eachResult['eachResult' + a])){
-              submitResult *= eachResult['eachResult' + a]; 
+            if(!isNaN(eachResult[a])){
+              submitResult *= eachResult[a]; 
             }
             // 입력되지 않은 값 포함 1과 0처리
-            submitResultAll *= eachResult['eachResult' + a];
+            submitResultAll *= eachResult[a];
             
               //console.log("이게 찐이지");
             //console.log(submitResult);
@@ -270,56 +271,109 @@
 
           // 중복체크는 안됨.. DB에서 유니크 제약조건시에 실패로만 뜸(가입하기 버튼은 눌림)
           if(submitResult > 0 && $('#memberPwdCheck').val() == $('#memberPwd').val()){
-        	  console.log("열려야되고");
-            $('#submitBtn').attr('disabled', false);
+        	  console.log("열려야되고");1
+        	  $('#submitBtn').attr('disabled', false);
+        	  
+        	  if($(this)[0] == $('#memberNickname')[0]) {
+        		  nicknameCheck();
+        		  console.log("여긴 다른곳이지");
+        		  //console.log(nicknameDupl);
+        		  console.log("이상하잖아");
+        		  // console.log(nicknameCheck());
+        		  
+        		  console.log("아아아아아아아ㅏ");
+        	  } else if($(this)[0] == $('#memberId')[0]) {
+        		  idCheck();
+        	  } else if($(this)[0] == $('#memberEmail')[0]) {
+        		  emailCheck();
+        	  } else {
+            	// $('#submitBtn').attr('disabled', false);
+            	// 콜백을 써서라도 중복체크 세개 다 성사 시 활성화 해줘야 함
+        	  }
+        	  console.log("왜이래");
+        	  console.log(resultIdCheck);
+        	  console.log(resultNicknameCheck);
+        	  
+        	  
+        	  // 정규표현식을 만족하고, 
+        	 if(resultNicknameCheck * resultIdCheck * resultEmailCheck == 0) {
+        		 $('#submitBtn').attr('disabled', true);
+        	 } else{
+        		 $('#submitBtn').attr('disabled', false);
+        	 }
+        	  
           } else{
         	  console.log("닫혀야됨");
             $('#submitBtn').attr('disabled', true);
           }
 		
+          
           // var $count = $cName * $cNickname;
           // if($count > 0){
             //   $('#submitBtn').attr('disabled', false);
           // } 
           
+          console.log("닉네임중복체크");
+          //console.log(resultDupl);
 
         
+        console.log("뿌에에에ㅔㅇ에");
+        const k = "";
+        //const kkk = nicknameCheck();
+        //console.log(kkk);
         });
-        
-        
+  	  $('#submitBtn').click(function(){
+		  console.log("클릭햇지");
+		  console.log(nicknameDupl);
+	  });
         
       })
       
-	var resultDupl;
+	var resultNicknameCheck = 1; // 아이거 어쩌지
+	var resultIdCheck = 1;
+	var resultEmailCheck = 1;
+	
     // ajax를 이용하여 닉네임 중복체크
     function nicknameCheck(){
     $.ajax({
       url : 'yrcheckDupl.me',
-      data : {
-      		checkVal : $('#memberNickname').val(),
-    	  	columnName : 'memberNickname'
-		},
+      data : {checkVal : $('#memberNickname').val(),
+    	  	  columnName : 'memberNickname'},
+		async : false, 
       // 중복체크 조회 성공 시
       success : function(result) {
+    	  console.log("여긴 DB를 갔다오므로 비용이 많이 듭니다.  닉네임");
         // 중복된 아이디
         const $nicknameLabel = $('label[for="memberNickname"]');
         if(result == 'NNNNN'){
           $nicknameLabel.text("* 이미 존재하는 닉네임입니다!").css('color', 'red');
-          // $('#submitBtn').attr('disabled', true);
-          resultDupl = result;
+          $('#submitBtn').attr('disabled', true);
+          //resultDupl = 0;
+          //callback(result);
+          //nicknameDupl = 0;
+          resultNicknameCheck = 0;
+          
         // 사용가능한 아이디
         } else{
         	//console.log("이게 나오면 레전드");
           // $('#submitBtn').attr('disabled', false);
-          resultDupl = result;
+          //resultDupl = 1;
+          resultNicknameCheck = 1;
+          
+
+          //nicknameDupl = 0;
+          console.log("에이젝스 안이지");
+          //console.log(nicknameDupl);
+          
+          
         }
       },
       // 중복체크 조회 실패 시
       error : function(){
         console.log('닉네임 중복체크 AJAX통신 실패!');
       }
-        })
-        return resultDupl;
+      })
+      return resultNicknameCheck;
     }
     // ajax를 이용하여 아이디 중복체크
     function idCheck(){
@@ -328,16 +382,21 @@
             url : 'yrcheckDupl.me',
             data : {checkVal : $('#memberId').val(),
             		columnName : 'memberId'},
+       		async : false, 
             // 중복체크 조회 성공 시
             success : function(result) {
+            	console.log("여긴 DB를 갔다오므로 비용이 많이 듭니다.  아이디");
                 // 중복된 아이디
                 if(result == 'NNNNN'){
                     $('label[for="memberId"]').text("* 이미 존재하거나 탈퇴한 회원의 아이디입니다!").css('color', 'red');
-        return false;
+                    $('#submitBtn').attr('disabled', true);
+        // return false;
+        			resultIdCheck = 0;
                 // 사용가능한 아이디
                 } else{
+                	resultIdCheck = 1;
         // $('#submitBtn').attr('disabled', false);
-        return true;
+        //return true;
                 }
             },
             // 중복체크 조회 실패 시
@@ -345,6 +404,8 @@
                 console.log('아이디 중복체크 AJAX통신 실패!');
             }
         })
+        return resultIdCheck;
+        
     }
     
     // ajax를 이용하여 이메일 중복체크
@@ -353,17 +414,21 @@
             url : 'yrcheckDupl.me',
             data : {checkVal : $('#memberEmail').val(),
             		columnName : 'memberEmail'},
+       		async : false, 
             // 중복체크 조회 성공 시
             success : function(result) {
+            	console.log("여긴 DB를 갔다오므로 비용이 많이 듭니다. 이메일");
                 // 중복된 아이디
                 if(result == 'NNNNN'){
                     $('label[for="memberEmail"]').text("* 이미 사용하고 있는 이메일입니다!").css('color', 'red');
-        // $('#submitBtn').attr('disabled', true);
-       return false;
+        			$('#submitBtn').attr('disabled', true);
+       // return false;
+       				resultEmailCheck = 0;
                 // 사용가능한 아이디
                 } else{
         // $('#submitBtn').attr('disabled', false);
-        return true;
+        // return true;
+        			resultEmailCheck = 1;
                 }
             },
             // 중복체크 조회 실패 시
@@ -371,6 +436,7 @@
                 console.log('이메일 중복체크 AJAX통신 실패!');
             }
         })
+        return resultEmailCheck;
     }
 
 
@@ -410,8 +476,13 @@
         $('#agreeAll').prop('checked', false);
       }
     });
+
   })
+  
+  
+
     </script>
+
       
     <!-- footer 푸터영역 -->
     <jsp:include page="/WEB-INF/views/common/footer.jsp" />

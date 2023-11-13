@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="com.kh.recipe.member.model.vo.Member" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	// 메인경로	
 	String contextPath = request.getContextPath();
@@ -173,11 +174,11 @@
 	<div id="wrap_header">
 		<div id="header">
 		    <div id="header_1"> <!-- 관리자 등급이면 관리자 페이지 버튼 활성화 - HL -->
- 		       <% if(loginMember != null && loginMember.getMemGrade() == 4) { %>
-		              <a href="<%= contextPath %>/hllogin.ma" id="managerCheck">
+ 		       <c:if test="${ not empty sessionScope.loginMember && sessionScope.loginMember.memGrade == 4}">
+		              <a href="/hllogin.ma" id="managerCheck">
 		                  	관리자 페이지 
 		              </a>
-		       <% } %>
+		       </c:if>
 		    </div>
 		    <div id="header_2">
 		        <a href="<%= contextPath %>">
@@ -193,36 +194,42 @@
 		                </a>
 		            </div>
 		            <div id="header_3_1_2">
-		          <% if(loginMember == null) { %>
-		            <!-- 로그인 클릭 시 로그인 화면으로 이동 yr -->
-		              <a href="<%= contextPath %>/yrloginForm.me">
-		                  <i class="fa-regular fa-user"></i><br>
-		                  <img src="" alt="">로그인 
-		              </a>
-		          <% } else { %>
-		          	<!-- 로그인 시 로그아웃으로 변경 yr -->
-		          	<a href="<%= contextPath %>/yrlogout.me">
-		                  <i class="fa-regular fa-user"></i><br>
-		                  <img src="" alt="">로그아웃
-		          	</a>
-		          <% } %>
+		          <c:choose>
+			          <c:when test="${ empty loginMember }">
+			            <!-- 로그인 클릭 시 로그인 화면으로 이동 yr -->
+			              <a href="yrloginForm.me">
+			                  <i class="fa-regular fa-user"></i><br>
+			                  <img src="" alt="">로그인 
+			              </a>
+			          </c:when>
+			          <c:otherwise>
+			          	<!-- 로그인 시 로그아웃으로 변경 yr -->
+			          	<a href="yrlogout.me">
+			                  <i class="fa-regular fa-user"></i><br>
+			                  <img src="" alt="">로그아웃
+			          	</a>
+			          </c:otherwise>
+		          </c:choose>
 		          </div>
 		          <div id="header_3_1_3">
-		              <% if(loginMember == null) { %>
-		              <!-- 회원가입을 누르면 회원가입 화면으로 이동 yr -->
-		              <a href="<%= contextPath %>/yrenrollForm.me">
-		                  <i class="fa-regular fa-handshake"></i><br> 
-		                  <img src="" alt="">회원가입
-		              </a>
-		              <% } else { %>
-		                  <a href="<%= contextPath %>/blog.me">
-		                  <i class="fa-regular fa-handshake"></i><br> 
-		                  <img src="" alt="">블로그 <br>
-							</a>
-		              <%} %>
+		          <c:choose>
+			          <c:when test="${ empty sessionScope.loginMember }">
+			              <!-- 회원가입을 누르면 회원가입 화면으로 이동 yr -->
+			              <a href="yrenrollForm.me">
+			                  <i class="fa-regular fa-handshake"></i><br> 
+			                  <img src="" alt="">회원가입
+			              </a>
+		              </c:when>
+		              <c:otherwise>
+			                  <a href="blog.me">
+			                  <i class="fa-regular fa-handshake"></i><br> 
+			                  <img src="" alt="">블로그 <br>
+								</a>
+		              </c:otherwise>
+	              </c:choose>
 		          </div>
 		          <div id="header_3_1_4">
-		              <a href="<%= contextPath %>/hllist.no">
+		              <a href="hllist.no">
 		                  <i class="fa-regular fa-door-open"></i><br>
 		                  <img src="" alt="">고객센터
 		              </a>
@@ -248,13 +255,13 @@
 		<div id="navigator">
 	 		<ul id="navi">
 		        <li>
-		            <a href="<%= contextPath %>/selectRecipeList.re?currentPage=1">레시피</a>
+		            <a href="selectRecipeList.re?currentPage=1">레시피</a>
 		        </li>
 		        <li>
 		            <a href="">셰프</a>
 		        </li>
 		        <li>
-		            <a href="<%= contextPath %>/main.po">마켓</a>
+		            <a href="main.po">마켓</a>
 		        </li>
 			</ul>
 		</div>

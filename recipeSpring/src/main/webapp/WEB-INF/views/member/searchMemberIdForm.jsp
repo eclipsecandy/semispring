@@ -36,7 +36,41 @@
     <!-- footer 푸터영역 -->
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />
 
-  <script src="resources/js/member/searchMemberIdForm.js"></script>
+  
+  <script>
+//아이디 찾기 ajax
+  const $memberName = $('input[name=memberName]');
+  const $memberEmail = $('input[name=memberEmail]');
+
+  function searchMemberId(){
+      console.log($memberName);
+      console.log($memberEmail);
+      $.ajax({
+          url : 'yrsearchMemberId.me',
+          data : {memName : $memberName.val(),
+                  memEmail : $memberEmail.val()},
+          success : function(result){
+        	  console.log("석세스");
+        	  console.log(result);
+        	  
+              if(result == null){
+                  $('#searchMemberId').html('조회된 아이디가 없습니다.');
+              } else{
+            	  console.log(result);
+                  if(result.memStatus == 'Y'){
+                  $('#searchMemberId').html('조회 아이디 : ' + result.memId);
+                  } else{
+                      $('#searchMemberId').html('이미 탈퇴한 회원입니다. 관리자에게 문의바랍니다.');
+                  }
+              }
+          },
+          error : function(){
+              console.log('아이디 찾기 AJAX통신 실패!');
+          }
+      })
+  }
+
+  </script>
 
 </body>
 </html>

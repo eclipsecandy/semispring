@@ -1,9 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ page import="com.kh.semi.member.model.vo.Member" %>
+<%@ page import="com.kh.recipe.member.model.vo.Member" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <% String contextPath = request.getContextPath(); %>
-<% Member loginMember = (Member)session.getAttribute("loginMember"); %>
 <!DOCTYPE html>
 <html>
 <head>

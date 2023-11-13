@@ -35,7 +35,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public Member searchMemberId(Member m) {
-		return null;
+		return memberDao.searchMemberId(sqlSession, m);
 	}
 
 	@Override

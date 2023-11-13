@@ -35,14 +35,33 @@
            	 오늘도 맛있는 식사하세요.
           </b>
           </h4>
-          <!-- <label for="uname"><b>아이디</b></label> -->
-          <input type="text" placeholder="아이디" name="memId" maxlength="20" required>
-      
-          <!-- <label for="psw"><b>비밀번호</b></label> -->
-          <input type="password" placeholder="비밀번호" name="memPwd" maxlength="20" required>
-      
-          <button type="submit" id="login">로그인</button>
-
+          <c:choose>
+	          <c:when test="${ not empty cookie.saveId }">
+       		      <input type="text" placeholder="아이디" name="memId" maxlength="20" value="${ cookie.saveId.value }" required>
+		          <input type="password" placeholder="비밀번호" name="memPwd" maxlength="20" required>
+		          <button type="submit" id="login">로그인</button>
+		          <div class="save">
+		          	<input type="checkbox" name="saveId" value="saveId" id="saveId" checked />
+		          	<label for="saveId"> 아이디 저장</label>
+		          </div>
+		          
+	          </c:when>
+	          <c:otherwise>
+				  <!-- <label for="uname"><b>아이디</b></label> -->
+		          <input type="text" placeholder="아이디" name="memId" maxlength="20" required>
+		      
+		          <!-- <label for="psw"><b>비밀번호</b></label> -->
+		          <input type="password" placeholder="비밀번호" name="memPwd" maxlength="20" required>
+		      
+		          <button type="submit" id="login">로그인</button>
+		          
+		          <div class="save">
+		          	<input type="checkbox" name="saveId" value="saveId" id="saveId" />
+		          	<label for="saveId"> 아이디 저장</label>
+		          </div>
+	          </c:otherwise>
+          </c:choose>
+          
 	        <div class="login-searchmenu">
 	          <!-- <button type="button" class="cancel-btn">Cancel</button> -->
 	          <div class="psw"><a href="yrenrollForm.me">회원가입</a></div>
