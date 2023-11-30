@@ -9,6 +9,7 @@
 	
 	<typeAliases>
 		<typeAlias type="com.kh.recipe.member.model.vo.Member" alias="member"/>
+		<typeAlias type="com.kh.recipe.member.model.vo.Cert" alias="cert" />
 	</typeAliases>
 	
 	<mappers>

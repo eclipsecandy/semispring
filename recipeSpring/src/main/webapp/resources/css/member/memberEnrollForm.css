@@ -24,6 +24,14 @@ button {
     width: 100%;
 }
 
+ input[name=memEmail], input[name=code]{
+	width: 70%;
+}
+
+.cert {
+	width: 29%;
+}
+
 /* Add a hover effect for buttons */
 button:hover {
     opacity: 0.8;
@@ -89,4 +97,6 @@ input[type="checkbox"]{
     margin : 0px 0px 5px 0px;
 }
 
-
+#code, #code-btn, label[for=code]{
+	display : none;
+}

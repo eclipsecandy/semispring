@@ -37,6 +37,9 @@
           </h4>
           <c:choose>
 	          <c:when test="${ not empty cookie.saveId }">
+	          <script>
+	          	console.log("${ cookie.saveId.value }");
+	          </script>
        		      <input type="text" placeholder="아이디" name="memId" maxlength="20" value="${ cookie.saveId.value }" required>
 		          <input type="password" placeholder="비밀번호" name="memPwd" maxlength="20" required>
 		          <button type="submit" id="login">로그인</button>
@@ -75,7 +78,7 @@
     <!-- footer 푸터영역 -->
 	<jsp:include page="/WEB-INF//views/common/footer.jsp" />
 
-    <c:if test="${ requestScope.errorMsg ne null}" >
+    <c:if test="${ sessionScope.errorMsg ne null}" >
 	  	<script>
 	      Swal.fire({
 	        icon: 'error',
@@ -83,7 +86,7 @@
 	        text: '아이디와 비밀번호를 다시 확인해 주세요.'
 	      })
 	    </script>
-    	<c:remove var="errorMsg" scope="request" />
+    	<c:remove var="errorMsg" scope="session" />
     </c:if>
     
   </body>

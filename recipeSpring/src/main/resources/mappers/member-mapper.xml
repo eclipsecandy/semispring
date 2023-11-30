@@ -25,6 +25,8 @@
 	</resultMap>
 	
 	<!-- 로그인 -->
+	
+	
 	<select id="loginMember" parameterType="member" resultMap="memberResultMap">
 		SELECT
 		        MEM_NO
@@ -47,28 +49,29 @@
 		  LEFT
 		  JOIN 
 		       (SELECT MEM_NO, CASE WHEN MEM_NO IN (1, 2) THEN 4
-		               WHEN ACCUMULATED_REWARD <![CDATA[<]]> 1000 THEN 1
-		               WHEN ACCUMULATED_REWARD <![CDATA[<]]> 3000 THEN 2
-		                ELSE 3 END AS MEM_GRADE_NUMBER
-		          FROM (SELECT *
-		                  FROM (SELECT MEM_NO, NVL(SUM(REWARD_SCORE), 0) AS ACCUMULATED_REWARD
-	                              FROM TB_REWARD
-	                             RIGHT 
-	                              JOIN 
-	                              	   TB_MEMBER
-	                             USING (MEM_NO)
-	                             WHERE NVL(REWARD_SCORE, 0) >= 0
-	                             GROUP BY MEM_NO))) 
+					                WHEN ACCUMULATED_REWARD <![CDATA[<]]> 1000 THEN 1
+					                WHEN ACCUMULATED_REWARD <![CDATA[<]]> 3000 THEN 2
+		                			ELSE 3 END AS MEM_GRADE_NUMBER
+		          FROM (SELECT MEM_NO, NVL(SUM(REWARD_SCORE), 0) AS ACCUMULATED_REWARD
+                          FROM TB_REWARD
+                         RIGHT 
+                          JOIN TB_MEMBER
+                         USING (MEM_NO)
+                         WHERE NVL(REWARD_SCORE, 0) >= 0
+                         GROUP BY MEM_NO)) 
 		 USING (MEM_NO)
 		  LEFT
 		  JOIN 
 		       TB_MEMBER_GRADE
 		    ON 
 		       MEM_GRADE_NUMBER = MEM_GRADE_NO
+		       
+		       
+		       
 		  LEFT
 		  JOIN (SELECT MEM_NO, SUM(REWARD_SCORE) AS MEM_REWARD
-		                              FROM TB_REWARD
-		                             GROUP BY MEM_NO)
+                  FROM TB_REWARD
+                 GROUP BY MEM_NO)
 		 USING (MEM_NO)
 		  LEFT 
 		  JOIN 
@@ -85,7 +88,6 @@
 		       MEM_ID = #{ memId }
 		   AND
 		       MEM_STATUS = 'Y'		
-	
 	</select>
 	
 	<!-- 회원가입 -->
@@ -112,7 +114,6 @@
 			   )
 	</insert>
 	
-	<!-- 중복체크 -->
 	<select id="checkDupl" parameterType="hashmap" resultType="_int">
 		SELECT 
 			   COUNT(*)
@@ -131,6 +132,51 @@
 		 	</otherwise>
 		 </choose>
 	</select>
+	
+	<!-- 이메일 인증코드  -->
+	<insert id="sendCode" parameterType="cert">
+		INSERT 
+		  INTO
+		  	   TB_CERT
+		  	   (
+		  	   RECIPIENT,
+		  	   CODE,
+		  	   SEND_DATE
+		  	   )
+		VALUES
+			   (
+			   #{ recipient },
+			   #{ code },
+			   SYSDATE
+			   )
+	</insert>
+	
+	<!-- 이메일 인증코드 검증 -->
+	<select id="validate" parameterType="cert" resultType="cert">
+		SELECT
+			   RECIPIENT,
+			   CODE,
+			   SEND_DATE
+		  FROM
+		  	   TB_CERT
+		 WHERE
+		 	   RECIPIENT = #{ recipient }
+		   AND 
+		   	   CODE = #{ code }
+		   AND 
+		   	   SEND_DATE BETWEEN SYSDATE - 3/24/60 AND SYSDATE
+	</select>
+	
+	<!-- 인증코드 삭제 -->
+	<delete id="deleteCode" parameterType="cert">
+		DELETE
+		  FROM
+		  	   TB_CERT
+		 WHERE
+		 	   RECIPIENT = #{ recipient }
+	</delete>
+	
+	
 	
 	<!-- 아이디 찾기 -->
 	<select id="searchMemberId" parameterType="member" resultMap="memberResultMap">

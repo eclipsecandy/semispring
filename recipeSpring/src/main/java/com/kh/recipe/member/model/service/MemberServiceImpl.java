@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kh.recipe.member.model.dao.MemberDao;
+import com.kh.recipe.member.model.vo.Cert;
 import com.kh.recipe.member.model.vo.Member;
 
 @Service
@@ -34,6 +35,20 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public int sendCode(Cert cert) {
+		return memberDao.sendCode(sqlSession, cert);
+	}
+	
+	@Override
+	public boolean validate(Cert cert) {
+		boolean result = memberDao.validate(sqlSession, cert);
+		if(result != false) {
+			memberDao.deleteCode(sqlSession, cert);
+		}
+		return result;
+	}
+	
+	@Override
 	public Member searchMemberId(Member m) {
 		return memberDao.searchMemberId(sqlSession, m);
 	}
@@ -57,5 +72,6 @@ public class MemberServiceImpl implements MemberService {
 	public int deleteMember(int memberNo) {
 		return 0;
 	}
+
 
 }
